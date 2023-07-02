@@ -21,7 +21,8 @@ Route::get('/auth', [AuthController::class, 'index'])->name('auth');
 Route::resource('dashboard', DashboardController::class);
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    // return redirect()->route('login');
+    return view('layouts.template');
 });
 
 // Route::middleware([

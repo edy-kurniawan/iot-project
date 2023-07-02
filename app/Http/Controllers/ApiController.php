@@ -43,12 +43,31 @@ class ApiController extends Controller
         // check mode in settings
         $mode = Setting::where('key', 'mode')->first()->value;
 
+        // automatic mode
+        if($mode == '1') {
+            // check ldr value
+            if($request->ldr_value < 500) {
+                // turn on relay
+                $relay_1 = '1';
+                $relay_2 = '1';
+            } else {
+                // turn off relay
+                $relay_1 = '0';
+                $relay_2 = '0';
+            }
+        }else{
+            // manual mode
+            $relay_1 = Setting::where('key', 'relay_1')->first()->value;
+            $relay_2 = Setting::where('key', 'relay_2')->first()->value;
+        }
+
         // return response
         return response()->json([
             'status'    => 'success',
             'message'   => 'Data created successfully',
             'data'      => $data,
-            'mode'      => $mode,
+            'relay_1'   => $relay_1,
+            'relay_2'   => $relay_2,
         ], 201);
     }
 
