@@ -18,7 +18,7 @@ const char* ssid = "CJIOffice";
 const char* password = "jangantanyambakWening";
 
 // Domain Name with full URL Path for HTTP POST Request
-const char* serverName = "http://192.168.0.254/api/absensi";
+const char* serverName = "http://iot.connectis.my.id/api/data";
 
 // FOR Decode JSON
 char msg[300];
@@ -46,12 +46,13 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // set title app
-  Serial.println("IMPLEMENTASI SISTEM SMART HOME UNTUK MONITORING DAN KONTROL PERALATAN RUMAH BERBASIS INTERNET OF THINGS");
+  Serial.println("IMPLEMENTASI");
   delay(2000);
 }
 
 void loop() {
-  nilaiSensor = analogRead(sensorLDR);
+  // nilaiSensor = analogRead(sensorLDR);
+  int nialiSensor = random(200);
   Serial.print("Nilai Sensor : ");
   Serial.println(nilaiSensor);
 
@@ -78,16 +79,12 @@ void loop() {
     // Decode JSON Result
     // Allocate JsonBuffer
     // Use arduinojson.org/assistant to compute the capacity.
-    const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
-    DynamicJsonBuffer jsonBuffer(capacity);
-
-    // Parse JSON object
-    JsonObject& root = jsonBuffer.parseObject(payload);
-    if (!root.success()) {
-      Serial.println(F("Parsing JSON result failed!"));
-      delay(1000);
+    // ArduinoJson 6
+    DynamicJsonDocument root(1024);
+    DeserializationError error = deserializeJson(root, payload);
+    if (error)
       return;
-    }
+    int value = root["value"];
 
     // check status relay 1
     if (String(root["relay_1"]) == "1") {
