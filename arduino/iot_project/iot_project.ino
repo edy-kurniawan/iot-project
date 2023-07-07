@@ -14,8 +14,8 @@ const int relay1 = D1;
 const int relay2 = D2;
 
 // Wifi Connection
-const char* ssid = "CJIOffice";
-const char* password = "jangantanyambakWening";
+const char* ssid = "Firr";
+const char* password = "11111111";
 
 // Domain Name with full URL Path for HTTP POST Request
 const char* serverName = "http://connectis.my.id:3000";
@@ -51,8 +51,7 @@ void setup() {
 }
 
 void loop() {
-  // nilaiSensor = analogRead(sensorLDR);
-  int nialiSensor = random(200);
+  nilaiSensor = analogRead(sensorLDR);
   Serial.print("Nilai Sensor : ");
   Serial.println(nilaiSensor);
 
@@ -67,7 +66,7 @@ void loop() {
     // Specify content-type header
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     // Data to send with HTTP POST
-    String httpRequestData = "&ldr_value=" + nilaiSensor;
+    String httpRequestData = "ldr_value=" + String(nilaiSensor);
     // Send HTTP POST request
     int httpResponseCode = http.POST(httpRequestData);
 
@@ -81,9 +80,12 @@ void loop() {
     deserializeJson(doc, payload);
     JsonObject root = doc.as<JsonObject>();
 
-    Serial.println(root["status"]);
-    Serial.println(root["relay_1"]);
-    Serial.println(root["relay_2"]);
+    Serial.println("Status");
+    Serial.println(String(root["status"]));
+    Serial.println("relay_1");
+    Serial.println(String(root["relay_1"]));
+    Serial.println("relay_2");
+    Serial.println(String(root["relay_2"]));
 
     // check status relay 1
     if (String(root["relay_1"]) == "1") {
@@ -108,5 +110,5 @@ void loop() {
   }
 
   // set delay 30 detik 
-  delay(30000);
+  delay(10000);
 }

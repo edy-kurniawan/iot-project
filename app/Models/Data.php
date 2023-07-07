@@ -12,5 +12,8 @@ class Data extends Model
     protected $fillable = [
         'timestamp',
         'ldr_value',
+        'mode',
+        'relay_1',
+        'relay_2',
     ];
 }

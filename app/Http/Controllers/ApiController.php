@@ -40,12 +40,6 @@ class ApiController extends Controller
             'ldr_value' => 'required|numeric',
         ]);
 
-        // create data
-        $data = Data::create([
-            'timestamp' => now(), // current timestamp
-            'ldr_value' => $request->ldr_value,
-        ]);
-
         // check mode in settings
         $mode = Setting::where('key', 'mode')->first()->value;
 
@@ -70,13 +64,22 @@ class ApiController extends Controller
             $relay_2 = Setting::where('key', 'relay_2')->first()->value;
         }
 
+        // create data
+        $data = Data::create([
+            'timestamp' => now(), // current timestamp
+            'ldr_value' => $request->ldr_value,
+            'mode'      => $mode,
+            'relay_1'   => $relay_1,
+            'relay_2'   => $relay_2,
+        ]);
+
         // return response
         return response()->json([
             'status'    => 'success',
-            'message'   => 'Data created successfully',
-            'data'      => $data,
             'relay_1'   => $relay_1,
             'relay_2'   => $relay_2,
+            'message'   => 'Data created successfully',
+            'data'      => $data,
         ], 201);
     }
 

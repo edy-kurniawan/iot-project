@@ -1,12 +1,11 @@
 <!doctype html>
 <html lang="en">
 
-
 <head>
-
     <meta charset="utf-8" />
     <title>IOT PROJECT</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ url('assets/images/favicon.ico') }}">
     <!-- Bootstrap Css -->
@@ -15,13 +14,17 @@
     <link href="{{ url('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ url('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <!-- DataTables -->
+    <link href="{{ url('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
 
+    <!-- Responsive datatable examples -->
+    <link href="{{ url('assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />    
 </head>
 
 <body data-sidebar="dark" data-layout-mode="light">
 
     <!-- <body data-layout="horizontal" data-topbar="dark"> -->
-
     <!-- Begin page -->
     <div id="layout-wrapper">
         <header id="page-topbar">
@@ -98,7 +101,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
-                            <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i>
+                            <a class="dropdown-item" href="/user/profile"><i class="bx bx-user font-size-16 align-middle me-1"></i>
                                 <span key="t-profile">Profile</span></a>
                             <a class="dropdown-item d-block" href="#"><span
                                     class="badge bg-success float-end">11</span><i
@@ -139,7 +142,8 @@
                             </a>
                             <ul class="sub-menu" aria-expanded="true">
                                 <li><a href="index.html" key="t-default">Overview<span
-                                    class="badge rounded-pill text-bg-success float-end" key="t-new">New</span></a></li>
+                                            class="badge rounded-pill text-bg-success float-end"
+                                            key="t-new">New</span></a></li>
                         </li>
                     </ul>
                 </div>
@@ -181,7 +185,8 @@
                                         <div class="col-7">
                                             <div class="text-primary p-3">
                                                 <h5 class="text-primary">Welcome Back !</h5>
-                                                <p>IMPLEMENTASI SISTEM SMART HOME UNTUK MONITORING DAN KONTROL PERALATAN RUMAH BERBASIS INTERNET OF THINGS</p>
+                                                <p>IMPLEMENTASI SISTEM SMART HOME UNTUK MONITORING DAN KONTROL PERALATAN
+                                                    RUMAH BERBASIS INTERNET OF THINGS</p>
                                             </div>
                                         </div>
                                         <div class="col-5 align-self-end">
@@ -209,12 +214,12 @@
                                                         <p class="text-muted mb-0">Last Login</p>
                                                     </div>
                                                     <div class="col-6">
-                                                        <h5 class="font-size-15">174.102.12.12</h5>
+                                                        <h5 class="font-size-15">{{ $ip_address }}</h5>
                                                         <p class="text-muted mb-0">IP Address</p>
                                                     </div>
                                                 </div>
                                                 <div class="mt-4">
-                                                    <a href="javascript: void(0);"
+                                                    <a href="/user/profile"
                                                         class="btn btn-primary waves-effect waves-light btn-sm">View
                                                         Profile <i class="mdi mdi-arrow-right ms-1"></i></a>
                                                 </div>
@@ -229,24 +234,41 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <p class="text-muted mb-0">Mode sistem :</p>
-                                            <select class="form-select">
-                                                <option value="1">Otomatis</option>
+                                            <select name="mode" class="form-select" onchange="changeMode()" id="mode">
+                                                @if ($mode == '1')
+                                                <option value="1" selected>Otomatis</option>
                                                 <option value="0">Manual</option>
+                                                @else
+                                                <option value="1">Otomatis</option>
+                                                <option value="0" selected>Manual</option>
+                                                @endif
                                             </select>
-                                            <p class="text-muted mb-0 mt-3 mb-1">Status Relay :</p>
+                                            <p class="text-muted mb-0 mt-3 mb-1">Status :</p>
                                             <div class="row">
                                                 <div class="col-sm-6">
-                                                    <p class="text-muted mx-0 my-0">Relay 1</p>
+                                                    <p class="text-muted mx-0 my-0">Button 1</p>
                                                     <div class="square-switch">
-                                                        <input type="checkbox" id="square-switch1" switch="none" checked />
+                                                        @if ($relay_1 == '1')
+                                                        <input type="checkbox" id="square-switch1" switch="none"
+                                                            onchange="changeButton1()" checked />
+                                                        @else
+                                                        <input type="checkbox" id="square-switch1" switch="none"
+                                                            onchange="changeButton1()" />
+                                                        @endif
                                                         <label for="square-switch1" data-on-label="On"
                                                             data-off-label="Off"></label>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
-                                                    <p class="text-muted mx-0 my-0">Relay 2</p>
+                                                    <p class="text-muted mx-0 my-0">Button 2</p>
                                                     <div class="square-switch">
-                                                        <input type="checkbox" id="square-switch2" switch="info" checked />
+                                                        @if ($relay_2 == '1')
+                                                        <input type="checkbox" id="square-switch2" switch="none"
+                                                            onchange="changeButton2()" checked />
+                                                        @else
+                                                        <input type="checkbox" id="square-switch2" switch="none"
+                                                            onchange="changeButton2()" />
+                                                        @endif
                                                         <label for="square-switch2" data-on-label="On"
                                                             data-off-label="Off"></label>
                                                     </div>
@@ -259,13 +281,14 @@
                                                     <div class="mb-4">
                                                         <i class="mdi mdi-theme-light-dark text-primary display-4"></i>
                                                     </div>
-                                                    <h3>1,456</h3>
-                                                    <p>Intensitas Saat Ini</p>
+                                                    <h3 id="value">0</h3>
+                                                    <p>value Saat Ini</p>
                                                 </div>
                                             </div>
                                         </div>
+                                        <p class="text-muted fst-italic mb-0">Relay dapat dikontrol dengan mode sistem
+                                            manual.</p>
                                     </div>
-                                    <p class="text-muted fst-italic mb-0">Relay dapat dikontrol dengan mode sistem manual.</p>
                                 </div>
                             </div>
                         </div>
@@ -277,7 +300,7 @@
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted fw-medium">Rata - rata Intensitas</p>
-                                                    <h4 class="mb-0">1,235</h4>
+                                                    <h4 class="mb-0">{{ number_format($average) }}</h4>
                                                 </div>
 
                                                 <div class="flex-shrink-0 align-self-center">
@@ -297,7 +320,7 @@
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted fw-medium">Intensitas Tertinggi</p>
-                                                    <h4 class="mb-0">$35, 723</h4>
+                                                    <h4 class="mb-0">{{ number_format($max)}}</h4>
                                                 </div>
 
                                                 <div class="flex-shrink-0 align-self-center ">
@@ -317,7 +340,7 @@
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
                                                     <p class="text-muted fw-medium">Intensitas Terendah</p>
-                                                    <h4 class="mb-0">$16.2</h4>
+                                                    <h4 class="mb-0">{{ number_format($min)}}</h4>
                                                 </div>
 
                                                 <div class="flex-shrink-0 align-self-center">
@@ -366,7 +389,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title mb-4">Table Data</h4>
                                     <div class="table-responsive">
-                                        <table class="table align-middle table-nowrap mb-0">
+                                        <table id="datatable2" class="table align-middle table-nowrap mb-0">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th class="align-middle">Tanggal</th>
@@ -378,24 +401,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td><a href="javascript: void(0);"
-                                                            class="text-body fw-bold">#SK2540</a> </td>
-                                                    <td>Neal Matthews</td>
-                                                    <td>
-                                                        07 Oct, 2019
-                                                    </td>
-                                                    <td>
-                                                        $400
-                                                    </td>
-                                                    <td>
-                                                        <span
-                                                            class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                                    </td>
-                                                    <td>
-                                                        <i class="fab fa-cc-mastercard me-1"></i> Mastercard
-                                                    </td>
-                                                </tr>
+                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -419,7 +425,8 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                IMPLEMENTASI SISTEM SMART HOME UNTUK MONITORING DAN KONTROL PERALATAN RUMAH BERBASIS INTERNET OF THINGS
+                                IMPLEMENTASI SISTEM SMART HOME UNTUK MONITORING DAN KONTROL PERALATAN RUMAH BERBASIS
+                                INTERNET OF THINGS
                             </div>
                         </div>
                     </div>
@@ -488,6 +495,185 @@
 
     <!-- App js -->
     <script src="{{ url('assets/js/app.js') }}"></script>
+
+    <!-- Required datatable js -->
+    <script src="{{ url('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Buttons examples -->
+    <script src="{{ url('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ url('assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ url('assets/libs/jszip/jszip.min.js') }}"></script>
+    <script src="{{ url('assets/libs/pdfmake/build/pdfmake.min.js') }}"></script>
+    <script src="{{ url('assets/libs/pdfmake/build/vfs_fonts.js') }}"></script>
+    <script src="{{ url('assets/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ url('assets/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ url('assets/libs/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+    
+    <!-- Responsive examples -->
+    <script src="{{ url('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ url('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
+
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous">
+    </script>
+    <script>
+        var table;
+        $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            table = $('#datatable2').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                        url: "{{ route('dashboard.create') }}",
+                        type: "GET",
+                },
+                columns: [
+                    {data: 'tanggal', name: 'tanggal'},
+                    {data: 'waktu', name: 'waktu'},
+                    {data: 'intensitas', name: 'intensitas', searchable: true},
+                    {data: 'mode', name: 'mode'},
+                    {data: 'relay_1', name: 'relay_1'},
+                    {data: 'relay_2', name: 'relay_2'},
+                ]
+            });
+
+            // check mode
+            var mode = document.getElementById('mode').value;
+            // check mode
+            if (mode == '1') {
+                console.log('mode otomatis');
+                // disable button
+                document.getElementById('square-switch1').disabled = true;
+                document.getElementById('square-switch2').disabled = true;
+            } else {
+                console.log('mode manual');
+                // enable button
+                document.getElementById('square-switch1').disabled = false;
+                document.getElementById('square-switch2').disabled = false;
+            }
+            
+        });
+
+        // socket.io
+        const serverurl = 'http://connectis.my.id:3000';
+        const websocket = io(serverurl, {
+            transports : ['websocket'],
+            withCredentials: false,
+        });
+
+        // on message from server
+        websocket.on('ws-ldr-value', function(value) {
+            // ldr_min value
+            var ldr_min = {{ $ldr_min }};
+            // set value
+            document.getElementById('value').innerHTML = value;
+            console.log('ldr value : ' + value);
+            // check mode
+            var mode = document.getElementById('mode').value;
+            // if mode automatic
+            if(mode == '1') {
+                // check value
+                if(value <= ldr_min) {
+                    // square-switch1 checked
+                    document.getElementById('square-switch1').checked = true;
+                    // square-switch2 checked
+                    document.getElementById('square-switch2').checked = true; 
+                } else {
+                    // square-switch1 checked
+                    document.getElementById('square-switch1').checked = false;
+                    // square-switch2 checked
+                    document.getElementById('square-switch2').checked = false;
+                }
+            }
+            // reload datatable
+            table.ajax.reload();
+        });
+
+        function changeButton1() {
+            // get button status
+            var status = document.getElementById('square-switch1').checked;
+            // check status
+            if (status == true) {
+                status_relay = 1;
+            } else {
+                status_relay = 0;
+            }
+            // send to server with ajax
+            $.ajax({
+                url: "/api/data/1?relay=relay_1&value=" + status_relay,
+                type: "GET",
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+            // disable button on 2 seconds
+            document.getElementById('square-switch1').disabled = true;
+            setTimeout(function() {
+                document.getElementById('square-switch1').disabled = false;
+            }, 2000);
+        }
+
+        function changeButton2() {
+            // get button status
+            var status = document.getElementById('square-switch2').checked;
+            // check status
+            if (status == true) {
+                status_relay = 1;
+            } else {
+                status_relay = 0;
+            }
+            // send to server with ajax
+            $.ajax({
+                url: "/api/data/1?relay=relay_2&value=" + status_relay,
+                type: "GET",
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+            // disable button on 2 seconds
+            document.getElementById('square-switch2').disabled = true;
+            setTimeout(function() {
+                document.getElementById('square-switch2').disabled = false;
+            }, 2000);
+        }
+
+        function changeMode(){
+            // get mode status
+            var status = document.getElementById('mode').value;
+            // send to server with ajax
+            $.ajax({
+                url: "/api/data/create?mode=" + status,
+                type: "GET",
+                success: function(data) {
+                    console.log(data);
+                    // disable button on 2 seconds
+                    document.getElementById('mode').disabled = true;
+                    setTimeout(function() {
+                        document.getElementById('mode').disabled = false;
+                    }, 2000);
+                }
+            });
+            // if mode is manual, disable button
+            if (status == '1') {
+                console.log('mode otomatis');
+                // disable button
+                document.getElementById('square-switch1').disabled = true;
+                document.getElementById('square-switch2').disabled = true;
+            } else {
+                console.log('mode manual');
+                // enable button
+                document.getElementById('square-switch1').disabled = false;
+                document.getElementById('square-switch2').disabled = false;
+            }
+        }
+
+    </script>
 </body>
 
 

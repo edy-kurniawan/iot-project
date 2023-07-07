@@ -69,6 +69,7 @@
                             </div>
                         </div>
                     </div>
+                    <p class="text-muted fst-italic mb-0">Relay dapat dikontrol dengan mode sistem manual.</p>
                 </div>
             </div>
         </div>

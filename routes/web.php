@@ -21,7 +21,7 @@ Route::get('/auth', [AuthController::class, 'index'])->name('auth');
 Route::resource('dashboard', DashboardController::class);
 
 Route::get('/', function () {
-    // return redirect()->route('login');
+    return redirect()->route('dashboard.index');
     // return view('layouts.template');
     return view('websocket');
 });
