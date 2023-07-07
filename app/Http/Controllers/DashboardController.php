@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Data;
+use App\Models\Setting;
 
 class DashboardController extends Controller
 {
@@ -11,7 +13,17 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        //
+        $mode       = Setting::where('key', 'mode')->first()->value;
+        $relay_1    = Setting::where('key', 'relay_1')->first()->value;
+        $relay_2    = Setting::where('key', 'relay_2')->first()->value;
+        $ldr_min    = Setting::where('key', 'ldr_min')->first()->value;
+
+        return view('websocket',[
+            'mode'      => $mode,
+            'relay_1'   => $relay_1,
+            'relay_2'   => $relay_2,
+            'ldr_min'   => $ldr_min,
+        ]);
     }
 
     /**

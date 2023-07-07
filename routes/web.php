@@ -22,7 +22,8 @@ Route::resource('dashboard', DashboardController::class);
 
 Route::get('/', function () {
     // return redirect()->route('login');
-    return view('layouts.template');
+    // return view('layouts.template');
+    return view('websocket');
 });
 
 // Route::middleware([

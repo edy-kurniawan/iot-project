@@ -19,9 +19,15 @@ class ApiController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        // change mode to manual
+        Setting::where('key', 'mode')->update(['value' => $request->mode]);
+
+        return response()->json([
+            'status'    => true,
+            'message'   => 'Mode changed to manual',
+        ], 201);
     }
 
     /**
@@ -43,10 +49,13 @@ class ApiController extends Controller
         // check mode in settings
         $mode = Setting::where('key', 'mode')->first()->value;
 
+        // check ldr min value
+        $ldr_min = Setting::where('key', 'ldr_min')->first()->value;
+
         // automatic mode
         if($mode == '1') {
             // check ldr value
-            if($request->ldr_value < 500) {
+            if($request->ldr_value <= $ldr_min) {
                 // turn on relay
                 $relay_1 = '1';
                 $relay_2 = '1';
@@ -74,9 +83,16 @@ class ApiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
-        //
+        // change relay_1 value
+        Setting::where('key', $request->relay)->update(['value' => $request->value]);
+
+        // return response
+        return response()->json([
+            'status'    => true,
+            'message'   => $request->relay.' changed to '.$request->value,
+        ], 201);
     }
 
     /**
@@ -92,7 +108,7 @@ class ApiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //    
     }
 
     /**

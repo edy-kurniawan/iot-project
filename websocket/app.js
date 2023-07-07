@@ -34,7 +34,7 @@ app.post('/', cors(), function (req, res) {
     // broadcast to all clients
     io.emit('ws-ldr-value', req.body.ldr_value);
     // post to api
-    axios.post('http://127.0.0.1:8000/api/data', {
+    axios.post('http://connectis.my.id:3000', {
       ldr_value: req.body.ldr_value
     })
     .then(function (response) {
@@ -47,8 +47,14 @@ app.post('/', cors(), function (req, res) {
     });
 });
 
+// io on ws-button1
 io.on('connection', (socket) => {
   console.log('a user connected : '+ socket.id) ;
+  socket.on('ws-button1', (msg) => {
+    console.log('ws-button1: ' + msg);
+    // broadcast to all clients
+    io.emit('ws-button1', msg);
+  });
 });
 
 server.listen(3000, () => {

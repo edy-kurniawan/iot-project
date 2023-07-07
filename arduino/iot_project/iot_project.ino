@@ -18,7 +18,7 @@ const char* ssid = "CJIOffice";
 const char* password = "jangantanyambakWening";
 
 // Domain Name with full URL Path for HTTP POST Request
-const char* serverName = "http://iot.connectis.my.id/api/data";
+const char* serverName = "http://connectis.my.id:3000";
 
 // FOR Decode JSON
 char msg[300];
@@ -46,7 +46,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // set title app
-  Serial.println("IMPLEMENTASI");
+  Serial.println("WEBSOCKET CLIENT");
   delay(2000);
 }
 
@@ -76,15 +76,14 @@ void loop() {
     Serial.println("Response API : ");
     Serial.println(payload);
 
-    // Decode JSON Result
-    // Allocate JsonBuffer
-    // Use arduinojson.org/assistant to compute the capacity.
-    // ArduinoJson 6
-    DynamicJsonDocument root(1024);
-    DeserializationError error = deserializeJson(root, payload);
-    if (error)
-      return;
-    int value = root["value"];
+    // decode payload with ArduinoJson 6
+    StaticJsonDocument<300> doc;
+    deserializeJson(doc, payload);
+    JsonObject root = doc.as<JsonObject>();
+
+    Serial.println(root["status"]);
+    Serial.println(root["relay_1"]);
+    Serial.println(root["relay_2"]);
 
     // check status relay 1
     if (String(root["relay_1"]) == "1") {
@@ -107,5 +106,7 @@ void loop() {
     // Free resources
     http.end();
   }
-  delay(1000);
+
+  // set delay 30 detik 
+  delay(30000);
 }
